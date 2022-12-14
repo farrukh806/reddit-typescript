@@ -11,17 +11,14 @@ export class PostResolver {
 	}
 
 	@Query(() => Post, { nullable: true })
-	post(
-		@Arg('id', () => Int) id: number,
-		@Ctx() ctx: MyContext
-	): Promise<Post | null> {
+	post(@Arg('id') id: number, @Ctx() ctx: MyContext): Promise<Post | null> {
 		return ctx.em.findOne(Post, { id });
 	}
 
 	@Mutation(() => Post)
 	async createPost(
-		@Arg('title', () => String) title: string,
-		@Arg('description', () => String) description: string,
+		@Arg('title') title: string,
+		@Arg('description') description: string,
 		@Ctx() ctx: MyContext
 	): Promise<Post> {
 		const post = ctx.em.create(Post, { title, description } as Post);
@@ -31,9 +28,9 @@ export class PostResolver {
 
 	@Mutation(() => Post, { nullable: true })
 	async updatePost(
-		@Arg('id', () => Int) id: number,
-		@Arg('title', () => String) title: string,
-		@Arg('description', () => String) description: string,
+		@Arg('id') id: number,
+		@Arg('title') title: string,
+		@Arg('description') description: string,
 		@Ctx() ctx: MyContext
 	): Promise<Post | null> {
 		const post = await ctx.em.findOne(Post, { id });
@@ -53,7 +50,7 @@ export class PostResolver {
 
 	@Mutation(() => Boolean)
 	async deletePost(
-		@Arg('id', () => Int) id: number,
+		@Arg('id') id: number,
 		@Ctx() ctx: MyContext
 	): Promise<boolean> {
 		const post = await ctx.em.findOne(Post, { id });
