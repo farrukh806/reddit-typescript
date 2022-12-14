@@ -1,5 +1,5 @@
 import { Post } from './../entities/Post';
-import { Query, Resolver, Ctx } from 'type-graphql';
+import { Query, Resolver, Ctx, Arg, Int, Mutation } from 'type-graphql';
 
 import { MyContext } from '../types';
 
@@ -8,5 +8,59 @@ export class PostResolver {
 	@Query(() => [Post])
 	posts(@Ctx() ctx: MyContext): Promise<Post[]> {
 		return ctx.em.find(Post, {});
+	}
+
+	@Query(() => Post, { nullable: true })
+	post(
+		@Arg('id', () => Int) id: number,
+		@Ctx() ctx: MyContext
+	): Promise<Post | null> {
+		return ctx.em.findOne(Post, { id });
+	}
+
+	@Mutation(() => Post)
+	async createPost(
+		@Arg('title', () => String) title: string,
+		@Arg('description', () => String) description: string,
+		@Ctx() ctx: MyContext
+	): Promise<Post> {
+		const post = ctx.em.create(Post, { title, description } as Post);
+		await ctx.em.persistAndFlush(post);
+		return post;
+	}
+
+	@Mutation(() => Post, { nullable: true })
+	async updatePost(
+		@Arg('id', () => Int) id: number,
+		@Arg('title', () => String) title: string,
+		@Arg('description', () => String) description: string,
+		@Ctx() ctx: MyContext
+	): Promise<Post | null> {
+		const post = await ctx.em.findOne(Post, { id });
+		if (!post) {
+			return null;
+		}
+		if (typeof title !== 'undefined') {
+			post.title = title;
+			await ctx.em.persistAndFlush(post);
+		}
+		if (typeof description !== 'undefined') {
+			post.description = description;
+			await ctx.em.persistAndFlush(post);
+		}
+		return post;
+	}
+
+	@Mutation(() => Boolean)
+	async deletePost(
+		@Arg('id', () => Int) id: number,
+		@Ctx() ctx: MyContext
+	): Promise<boolean> {
+		const post = await ctx.em.findOne(Post, { id });
+		if (!post) {
+			return false;
+		}
+		await ctx.em.removeAndFlush(post);
+		return true;
 	}
 }
