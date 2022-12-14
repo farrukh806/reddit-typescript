@@ -103,6 +103,9 @@ export class UserResolver {
 				options.password
 			);
 			if (passwordMatched) {
+                
+				ctx.req.session.userId = userExists.id;
+				console.log(ctx.req.session);
 				return { user: userExists };
 			} else {
 				return {
