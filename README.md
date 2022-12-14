@@ -1,5 +1,7 @@
 # Rddit-TypeScript
 
+Reddit web application using TypeScript, GraphQL and PostgreSQL
+
 To start the project
 
 1. Install the dependencies using `npm install`
