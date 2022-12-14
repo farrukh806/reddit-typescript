@@ -1,4 +1,4 @@
-# Rddit-TypeScript
+# Reddit-TypeScript
 
 Reddit web application using TypeScript, GraphQL and PostgreSQL
 
