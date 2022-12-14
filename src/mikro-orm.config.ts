@@ -9,7 +9,7 @@ export default {
 	password: 'postgres',
 	entities: [Post],
 	type: 'postgresql',
-	debug: !__prod__,
+	// debug: !__prod__,
 	allowGlobalContext: true,
 	migrations: {
 		path: path.join(__dirname, './migrations'),
