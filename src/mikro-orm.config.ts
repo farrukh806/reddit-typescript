@@ -1,13 +1,15 @@
-import { Post } from './entities/Post';
-import { __prod__ } from './constants';
 import { MikroORM } from '@mikro-orm/core';
 import path from 'path';
+
+import { User } from './entities/User';
+import { Post } from './entities/Post';
+import { __prod__ } from './constants';
 
 export default {
 	dbName: 'reddit',
 	user: 'postgres',
 	password: 'postgres',
-	entities: [Post],
+	entities: [Post, User],
 	type: 'postgresql',
 	// debug: !__prod__,
 	allowGlobalContext: true,
