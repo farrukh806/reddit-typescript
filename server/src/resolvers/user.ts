@@ -1,14 +1,6 @@
-import {
-	Resolver,
-	Mutation,
-	Query,
-	Arg,
-	InputType,
-	Field,
-	Ctx,
-	ObjectType
-} from 'type-graphql';
+import { Resolver, Mutation, Query, Arg, InputType, Field,Ctx, ObjectType } from 'type-graphql';
 import argon2 from 'argon2';
+
 import { User } from './../entities/User';
 import { MyContext } from './../types';
 
@@ -39,11 +31,13 @@ class UserResponseType {
 	user?: User;
 }
 
+
+
 @Resolver()
 export class UserResolver {
+
 	@Query(() => User, { nullable: true })
 	async me(@Ctx() ctx: MyContext) {
-		console.log(ctx.req.session);
 		if (ctx.req.session.userId) {
 			const user = await ctx.em.findOne(User, {
 				id: ctx.req.session.userId
@@ -57,6 +51,7 @@ export class UserResolver {
 			return null;
 		}
 	}
+
 	@Mutation(() => UserResponseType)
 	async register(
 		@Arg('options') options: UsernamePasswordInputType,
@@ -87,8 +82,12 @@ export class UserResolver {
 			username: options.username,
 			password: hashedPassword
 		} as User);
+
 		try {
 			await ctx.em.persistAndFlush(user);
+			// set a cookie to the user
+			// this will keep them logged in
+			ctx.req.session.userId = user.id;
 			return { user };
 		} catch (err: any) {
 			if (err.code === '23505') {
@@ -121,7 +120,6 @@ export class UserResolver {
 			);
 			if (passwordMatched) {
 				ctx.req.session.userId = userExists.id;
-				console.log(ctx.req.session);
 				return { user: userExists };
 			} else {
 				return {
