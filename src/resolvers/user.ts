@@ -1,6 +1,7 @@
 import {
 	Resolver,
 	Mutation,
+	Query,
 	Arg,
 	InputType,
 	Field,
@@ -40,6 +41,22 @@ class UserResponseType {
 
 @Resolver()
 export class UserResolver {
+	@Query(() => User, { nullable: true })
+	async me(@Ctx() ctx: MyContext) {
+		console.log(ctx.req.session);
+		if (ctx.req.session.userId) {
+			const user = await ctx.em.findOne(User, {
+				id: ctx.req.session.userId
+			});
+			if (!user) {
+				return null;
+			}
+			return user;
+		} else {
+			// not logged in
+			return null;
+		}
+	}
 	@Mutation(() => UserResponseType)
 	async register(
 		@Arg('options') options: UsernamePasswordInputType,
@@ -103,7 +120,6 @@ export class UserResolver {
 				options.password
 			);
 			if (passwordMatched) {
-                
 				ctx.req.session.userId = userExists.id;
 				console.log(ctx.req.session);
 				return { user: userExists };

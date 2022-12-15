@@ -17,8 +17,13 @@ const main = async () => {
 	await orm.getMigrator().up(); // Updating database migrations to latest version
 
 	const RedisStore = connectRedis(session);
-	const redisClient = createClient({ legacyMode: true }) as any;
-	redisClient.connect().catch((err: Error) => console.error(err));
+	const redisClient = createClient({ legacyMode: true });
+
+	redisClient.on('error', (err: Error) =>
+		console.log('Redis Client Error', err)
+	);
+
+	await redisClient.connect().catch(console.error);
 
 	const app = express();
 
@@ -26,14 +31,14 @@ const main = async () => {
 		session({
 			name: 'qid',
 			store: new RedisStore({
-				client: redisClient,
+				client: redisClient as any,
 				disableTouch: true
 			}),
 			cookie: {
 				maxAge: 1000 * 60 * 60 * 24,
 				httpOnly: true,
 				sameSite: 'lax', // csrf protection
-				secure: __prod__ // only works with HTTPS
+				secure: false // only works with HTTPS
 			},
 			secret: 'bssecret',
 			saveUninitialized: false,
@@ -45,7 +50,18 @@ const main = async () => {
 			resolvers: [HelloResolver, PostResolver, UserResolver],
 			validate: false
 		}),
-		context: ({ req, res }) => ({ em: orm.em, req, res }) // This context object is available to all resolvers
+		context: ({ req, res }) => ({ em: orm.em, req, res })
+
+		// Uncomment the following block to enable testing using apollo sandbox in browser
+		// formatResponse: (responseFromServer, query) => {
+		// 	const { req, res } = query.context;
+		// 	res.header(
+		// 		'Access-Control-Allow-Origin',
+		// 		'https://studio.apollographql.com'
+		// 	);
+		// 	res.header('Access-Control-Allow-Credentials', true);
+		// 	return responseFromServer;
+		// }
 	});
 
 	await apolloServer.start();
