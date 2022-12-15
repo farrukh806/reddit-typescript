@@ -1,3 +1,15 @@
+# Reddit-TypeScript
+
+Reddit web application using NEXT, GraphQL and PostgreSQL
+
+To start the project
+
+1. Install the dependencies using `npm install`
+
+2. Compile typescript using `npm run compile`
+
+3. Run the javascript using `npm start`
+
 # Example app with [chakra-ui](https://github.com/chakra-ui/chakra-ui) and TypeScript
 
 This example features how to use [chakra-ui](https://github.com/chakra-ui/chakra-ui) as the component library within a Next.js app with TypeScript.
