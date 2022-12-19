@@ -2,7 +2,6 @@ import {
 	FormControl,
 	FormLabel,
 	Input,
-	FormHelperText,
 	FormErrorMessage
 } from '@chakra-ui/react';
 import { useField } from 'formik';
