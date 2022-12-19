@@ -5,8 +5,8 @@ import { buildSchema } from 'type-graphql';
 import { createClient } from 'redis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
+import cors from 'cors';
 
-import { __prod__ } from './constants';
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
@@ -26,7 +26,12 @@ const main = async () => {
 	await redisClient.connect().catch(console.error);
 
 	const app = express();
-
+	app.use(
+		cors({
+			origin: 'http://localhost:3000',
+			credentials: true
+		})
+	);
 	app.use(
 		session({
 			name: 'qid',
@@ -38,13 +43,14 @@ const main = async () => {
 				maxAge: 1000 * 60 * 60 * 24,
 				httpOnly: true,
 				sameSite: 'lax', // csrf protection
-				secure: false // only works with HTTPS
+				secure: false // works with HTTPS and HTTP also
 			},
 			secret: 'bssecret',
 			saveUninitialized: false,
 			resave: false
 		})
 	);
+
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({
 			resolvers: [HelloResolver, PostResolver, UserResolver],
@@ -65,7 +71,10 @@ const main = async () => {
 	});
 
 	await apolloServer.start();
-	apolloServer.applyMiddleware({ app });
+	apolloServer.applyMiddleware({
+		app,
+		cors: false
+	});
 
 	app.listen(4000, () => console.log('Server started on localhost:4000'));
 };
