@@ -29,7 +29,6 @@ const Navbar: React.FC<NavbarProps> = () => {
 			</>
 		);
 	} else {
-		console.log(data);
 		body = (
 			<Flex>
 				<Box>{data.me.username}</Box>
