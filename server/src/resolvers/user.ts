@@ -1,8 +1,18 @@
-import { Resolver, Mutation, Query, Arg, InputType, Field,Ctx, ObjectType } from 'type-graphql';
+import {
+	Resolver,
+	Mutation,
+	Query,
+	Arg,
+	InputType,
+	Field,
+	Ctx,
+	ObjectType
+} from 'type-graphql';
 import argon2 from 'argon2';
 
 import { User } from './../entities/User';
 import { MyContext } from './../types';
+import { COOKIE_NAME } from '../constants';
 
 @InputType()
 class UsernamePasswordInputType {
@@ -31,11 +41,8 @@ class UserResponseType {
 	user?: User;
 }
 
-
-
 @Resolver()
 export class UserResolver {
-
 	@Query(() => User, { nullable: true })
 	async me(@Ctx() ctx: MyContext) {
 		if (ctx.req.session.userId) {
@@ -135,5 +142,20 @@ export class UserResolver {
 		return {
 			errors: [{ field: 'username', message: 'username does not exist' }]
 		};
+	}
+
+	@Mutation(() => Boolean)
+	logout(@Ctx() ctx: MyContext) {
+		return new Promise((resolve) => {
+			ctx.req.session.destroy((err) => {
+				if (err) {
+					resolve(false);
+					return false;
+				}
+				ctx.res.clearCookie(COOKIE_NAME);
+				resolve(true);
+				return true;
+			});
+		});
 	}
 }
