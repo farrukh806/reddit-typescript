@@ -12,11 +12,11 @@ import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
 import mikroOrmConfig from './mikro-orm.config';
 import { COOKIE_NAME } from './constants';
+import { sendEmail } from './utils/sendMail';
 
 const main = async () => {
 	const orm = await MikroORM.init(mikroOrmConfig);
 	await orm.getMigrator().up(); // Updating database migrations to latest version
-
 	const RedisStore = connectRedis(session);
 	const redisClient = createClient({ legacyMode: true });
 

@@ -20,6 +20,9 @@ class UsernamePasswordInputType {
 	username!: string;
 
 	@Field()
+	email!: string;
+
+	@Field()
 	password!: string;
 }
 
@@ -64,6 +67,16 @@ export class UserResolver {
 		@Arg('options') options: UsernamePasswordInputType,
 		@Ctx() ctx: MyContext
 	): Promise<UserResponseType> {
+		if (options.email.length <= 6) {
+			return {
+				errors: [
+					{
+						field: 'email',
+						message: 'email must be at least 6 characters long'
+					}
+				]
+			};
+		}
 		if (options.username.length <= 2) {
 			return {
 				errors: [
@@ -84,9 +97,11 @@ export class UserResolver {
 				]
 			};
 		}
+
 		const hashedPassword = await argon2.hash(options.password);
 		const user = ctx.em.create(User, {
 			username: options.username,
+			email: options.email,
 			password: hashedPassword
 		} as User);
 
@@ -99,14 +114,25 @@ export class UserResolver {
 		} catch (err: any) {
 			if (err.code === '23505') {
 				// duplicate username error
-				return {
-					errors: [
-						{
-							field: 'username',
-							message: 'username already taken'
-						}
-					]
-				};
+				if (err.detail.includes('username')) {
+					return {
+						errors: [
+							{
+								field: 'username',
+								message: 'username already taken'
+							}
+						]
+					};
+				} else {
+					return {
+						errors: [
+							{
+								field: 'email',
+								message: 'email already taken'
+							}
+						]
+					};
+				}
 			}
 			return { errors: [err.message] };
 		}
@@ -114,16 +140,17 @@ export class UserResolver {
 
 	@Mutation(() => UserResponseType)
 	async login(
-		@Arg('options') options: UsernamePasswordInputType,
+		@Arg('usernameOrEmail') usernameOrEmail: string,
+		@Arg('password') password: string,
 		@Ctx() ctx: MyContext
 	): Promise<UserResponseType> {
 		const userExists = await ctx.em.findOne(User, {
-			username: options.username
+			$or: [{ email: usernameOrEmail }, { username: usernameOrEmail }]
 		});
 		if (typeof userExists !== 'undefined' && userExists !== null) {
 			const passwordMatched = await argon2.verify(
 				userExists.password,
-				options.password
+				password
 			);
 			if (passwordMatched) {
 				ctx.req.session.userId = userExists.id;
@@ -140,7 +167,12 @@ export class UserResolver {
 			}
 		}
 		return {
-			errors: [{ field: 'username', message: 'username does not exist' }]
+			errors: [
+				{
+					field: 'usernameOrEmail',
+					message: 'username or email does not exist'
+				}
+			]
 		};
 	}
 
@@ -157,5 +189,10 @@ export class UserResolver {
 				return true;
 			});
 		});
+	}
+
+	@Mutation(() => Boolean)
+	async forgotPassword(@Arg('email') email: string, @Ctx() ctx: MyContext) {
+		const userExists = ctx.em.findOne(User, { email });
 	}
 }

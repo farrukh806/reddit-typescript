@@ -1,4 +1,5 @@
 fragment regular_user on User {
 	id
 	username
+	email
 }

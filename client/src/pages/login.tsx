@@ -18,7 +18,7 @@ const Login: React.FC<LoginProps> = () => {
 	return (
 		<Wrapper>
 			<Formik
-				initialValues={{ username: '', password: '' }}
+				initialValues={{ usernameOrEmail: '', password: '' }}
 				onSubmit={async (values, { setErrors }) => {
 					const response = await login(values);
 					if (response.data?.login.errors) {
@@ -31,9 +31,9 @@ const Login: React.FC<LoginProps> = () => {
 				{({ isSubmitting }) => (
 					<Form>
 						<InputField
-							name='username'
-							placeholder='username'
-							label='Username'
+							name='usernameOrEmail'
+							placeholder='username or email'
+							label='Username or Email'
 						/>
 						<Box mt={8}>
 							<InputField
@@ -58,4 +58,3 @@ const Login: React.FC<LoginProps> = () => {
 };
 
 export default withUrqlClient(createUrqlClient)(Login);
-
