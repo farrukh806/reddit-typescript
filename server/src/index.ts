@@ -2,7 +2,7 @@ import express from 'express';
 import { MikroORM } from '@mikro-orm/core';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
@@ -12,19 +12,18 @@ import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
 import mikroOrmConfig from './mikro-orm.config';
 import { COOKIE_NAME } from './constants';
-import { sendEmail } from './utils/sendMail';
 
 const main = async () => {
 	const orm = await MikroORM.init(mikroOrmConfig);
 	await orm.getMigrator().up(); // Updating database migrations to latest version
 	const RedisStore = connectRedis(session);
-	const redisClient = createClient({ legacyMode: true });
+	const redis = new Redis();
 
-	redisClient.on('error', (err: Error) =>
-		console.log('Redis Client Error', err)
-	);
+	// redisClient.on('error', (err: Error) =>
+	// 	console.log('Redis Client Error', err)
+	// );
 
-	await redisClient.connect().catch(console.error);
+	// await redisClient.connect().catch(console.error);
 
 	const app = express();
 	app.use(
@@ -37,7 +36,7 @@ const main = async () => {
 		session({
 			name: COOKIE_NAME,
 			store: new RedisStore({
-				client: redisClient as any,
+				client: redis as any,
 				disableTouch: true
 			}),
 			cookie: {
@@ -57,7 +56,7 @@ const main = async () => {
 			resolvers: [HelloResolver, PostResolver, UserResolver],
 			validate: false
 		}),
-		context: ({ req, res }) => ({ em: orm.em, req, res })
+		context: ({ req, res }) => ({ em: orm.em, req, res, redis })
 
 		// Uncomment the following block to enable testing using apollo sandbox in browser
 		// formatResponse: (responseFromServer, query) => {

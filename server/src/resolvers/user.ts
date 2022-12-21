@@ -9,10 +9,12 @@ import {
 	ObjectType
 } from 'type-graphql';
 import argon2 from 'argon2';
+import { v4 } from 'uuid';
 
 import { User } from './../entities/User';
 import { MyContext } from './../types';
-import { COOKIE_NAME } from '../constants';
+import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from '../constants';
+import { sendEmail } from '../utils/sendMail';
 
 @InputType()
 class UsernamePasswordInputType {
@@ -193,6 +195,22 @@ export class UserResolver {
 
 	@Mutation(() => Boolean)
 	async forgotPassword(@Arg('email') email: string, @Ctx() ctx: MyContext) {
-		const userExists = ctx.em.findOne(User, { email });
+		const userExists = await ctx.em.findOne(User, { email });
+		if (!userExists) {
+			// email does not exists
+			return false;
+		}
+		const token = v4();
+		await ctx.redis.set(
+			FORGOT_PASSWORD_PREFIX + token,
+			userExists.id,
+			'EX',
+			1000 * 60 * 60 * 24 // 1 day as expiration
+		);
+		await sendEmail(
+			email,
+			`<a href="http://localhost:3000/password-reset/${token}">Reset Password</a>`
+		);
+		return true;
 	}
 }
