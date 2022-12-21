@@ -213,4 +213,51 @@ export class UserResolver {
 		);
 		return true;
 	}
+
+	@Mutation(() => UserResponseType)
+	async changePassword(
+		@Arg('token') token: string,
+		@Arg('newPassword') newPassword: string,
+		@Ctx() ctx: MyContext
+	): Promise<UserResponseType> {
+		if (newPassword.length <= 5) {
+			return {
+				errors: [
+					{
+						field: 'newPassword',
+						message: 'password must be at least 5 characters long'
+					}
+				]
+			};
+		}
+		const userId = await ctx.redis.get(FORGOT_PASSWORD_PREFIX + token);
+		if (!userId) {
+			return {
+				errors: [
+					{
+						field: 'token',
+						message: 'token expired'
+					}
+				]
+			};
+		}
+
+		const user = await ctx.em.findOne(User, { id: parseInt(userId) });
+		if (!user) {
+			return {
+				errors: [
+					{
+						field: 'token',
+						message: 'user no longer exists'
+					}
+				]
+			};
+		}
+		user.password = await argon2.hash(newPassword);
+		ctx.em.persistAndFlush(user);
+		
+		// login user
+		ctx.req.session.userId = user.id;
+		return { user };
+	}
 }
