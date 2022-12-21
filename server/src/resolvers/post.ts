@@ -45,8 +45,9 @@ export class PostResolver {
 
 	@Mutation(() => Boolean)
 	async deletePost(@Arg('id') id: number): Promise<boolean> {
-		const post = await Post.delete(id);
-		if (!post) {
+		const result = await Post.delete(id);
+
+		if (result.affected === 0) {
 			return false;
 		}
 		return true;
