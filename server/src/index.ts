@@ -19,12 +19,6 @@ const main = async () => {
 	const RedisStore = connectRedis(session);
 	const redis = new Redis();
 
-	// redisClient.on('error', (err: Error) =>
-	// 	console.log('Redis Client Error', err)
-	// );
-
-	// await redisClient.connect().catch(console.error);
-
 	const app = express();
 	app.use(
 		cors({

@@ -255,7 +255,8 @@ export class UserResolver {
 		}
 		user.password = await argon2.hash(newPassword);
 		ctx.em.persistAndFlush(user);
-		
+
+		await ctx.redis.del(FORGOT_PASSWORD_PREFIX + token);
 		// login user
 		ctx.req.session.userId = user.id;
 		return { user };
