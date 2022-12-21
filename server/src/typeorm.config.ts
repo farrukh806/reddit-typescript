@@ -4,17 +4,22 @@ import path from 'path';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
 import { __prod__ } from './constants';
+import { DataSource } from 'typeorm';
 
-export default {
-	dbName: 'reddit',
-	user: 'postgres',
+const AppDataSource = new DataSource({
+	type: 'postgres',
+	host: 'localhost',
+	port: 5432,
+	username: 'postgres',
 	password: 'postgres',
-	entities: [Post, User],
-	type: 'postgresql',
-	// debug: !__prod__,
-	allowGlobalContext: true,
+	database: 'reddit',
+	entities: [User, Post],
+	synchronize: true,
+	// logging: true,
 	migrations: {
 		path: path.join(__dirname, './migrations'),
 		glob: '!(*.d).{js,ts}'
 	}
-} as Parameters<typeof MikroORM.init>[0];
+});
+
+export default AppDataSource;

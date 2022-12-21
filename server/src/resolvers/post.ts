@@ -1,63 +1,54 @@
 import { Post } from './../entities/Post';
-import { Query, Resolver, Ctx, Arg, Mutation } from 'type-graphql';
-
-import { MyContext } from '../types';
+import { Query, Resolver, Arg, Mutation } from 'type-graphql';
 
 @Resolver()
 export class PostResolver {
 	@Query(() => [Post])
-	posts(@Ctx() ctx: MyContext): Promise<Post[]> {
-		return ctx.em.find(Post, {});
+	posts(): Promise<Post[]> {
+		return Post.find();
 	}
 
 	@Query(() => Post, { nullable: true })
-	post(@Arg('id') id: number, @Ctx() ctx: MyContext): Promise<Post | null> {
-		return ctx.em.findOne(Post, { id });
+	post(@Arg('id') id: number): Promise<Post | null> {
+		return Post.findOne({ where: { id } });
 	}
 
 	@Mutation(() => Post)
 	async createPost(
 		@Arg('title') title: string,
-		@Arg('description') description: string,
-		@Ctx() ctx: MyContext
+		@Arg('description') description: string
 	): Promise<Post> {
-		const post = ctx.em.create(Post, { title, description } as Post);
-		await ctx.em.persistAndFlush(post);
-		return post;
+		const post = Post.create({ title, description });
+		return Post.save(post);
 	}
 
 	@Mutation(() => Post, { nullable: true })
 	async updatePost(
 		@Arg('id') id: number,
 		@Arg('title') title: string,
-		@Arg('description') description: string,
-		@Ctx() ctx: MyContext
+		@Arg('description') description: string
 	): Promise<Post | null> {
-		const post = await ctx.em.findOne(Post, { id });
+		const post = await Post.findOne({ where: { id } });
 		if (!post) {
 			return null;
 		}
 		if (typeof title !== 'undefined') {
 			post.title = title;
-			await ctx.em.persistAndFlush(post);
+			await Post.save(post);
 		}
 		if (typeof description !== 'undefined') {
 			post.description = description;
-			await ctx.em.persistAndFlush(post);
+			await Post.save(post);
 		}
 		return post;
 	}
 
 	@Mutation(() => Boolean)
-	async deletePost(
-		@Arg('id') id: number,
-		@Ctx() ctx: MyContext
-	): Promise<boolean> {
-		const post = await ctx.em.findOne(Post, { id });
+	async deletePost(@Arg('id') id: number): Promise<boolean> {
+		const post = await Post.delete(id);
 		if (!post) {
 			return false;
 		}
-		await ctx.em.removeAndFlush(post);
 		return true;
 	}
 }

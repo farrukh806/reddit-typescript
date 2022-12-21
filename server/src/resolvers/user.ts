@@ -51,8 +51,8 @@ export class UserResolver {
 	@Query(() => User, { nullable: true })
 	async me(@Ctx() ctx: MyContext) {
 		if (ctx.req.session.userId) {
-			const user = await ctx.em.findOne(User, {
-				id: ctx.req.session.userId
+			const user = await User.findOne({
+				where: { id: ctx.req.session.userId }
 			});
 			if (!user) {
 				return null;
@@ -101,14 +101,14 @@ export class UserResolver {
 		}
 
 		const hashedPassword = await argon2.hash(options.password);
-		const user = ctx.em.create(User, {
-			username: options.username,
-			email: options.email,
-			password: hashedPassword
-		} as User);
 
 		try {
-			await ctx.em.persistAndFlush(user);
+			const user = await User.create({
+				username: options.username,
+				email: options.email,
+				password: hashedPassword
+			}).save();
+			console.log(user);
 			// set a cookie to the user
 			// this will keep them logged in
 			ctx.req.session.userId = user.id;
@@ -146,8 +146,8 @@ export class UserResolver {
 		@Arg('password') password: string,
 		@Ctx() ctx: MyContext
 	): Promise<UserResponseType> {
-		const userExists = await ctx.em.findOne(User, {
-			$or: [{ email: usernameOrEmail }, { username: usernameOrEmail }]
+		const userExists = await User.findOne({
+			where: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
 		});
 		if (typeof userExists !== 'undefined' && userExists !== null) {
 			const passwordMatched = await argon2.verify(
@@ -195,7 +195,7 @@ export class UserResolver {
 
 	@Mutation(() => Boolean)
 	async forgotPassword(@Arg('email') email: string, @Ctx() ctx: MyContext) {
-		const userExists = await ctx.em.findOne(User, { email });
+		const userExists = await User.findOne({ where: { email } });
 		if (!userExists) {
 			// email does not exists
 			return false;
@@ -242,7 +242,9 @@ export class UserResolver {
 			};
 		}
 
-		const user = await ctx.em.findOne(User, { id: parseInt(userId) });
+		const id = parseInt(userId);
+
+		const user = await User.findOne({ where: { id } });
 		if (!user) {
 			return {
 				errors: [
@@ -253,9 +255,8 @@ export class UserResolver {
 				]
 			};
 		}
-		user.password = await argon2.hash(newPassword);
-		ctx.em.persistAndFlush(user);
-
+		let hashedPassword = await argon2.hash(newPassword);
+		await User.update(id, { password: hashedPassword });
 		await ctx.redis.del(FORGOT_PASSWORD_PREFIX + token);
 		// login user
 		ctx.req.session.userId = user.id;
