@@ -1,5 +1,5 @@
+import 'reflect-metadata';
 import express from 'express';
-import { MikroORM } from '@mikro-orm/core';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import Redis from 'ioredis';
@@ -10,12 +10,12 @@ import cors from 'cors';
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
-import mikroOrmConfig from './mikro-orm.config';
+import AppDataSource from './typeorm.config';
 import { COOKIE_NAME } from './constants';
 
 const main = async () => {
-	const orm = await MikroORM.init(mikroOrmConfig);
-	await orm.getMigrator().up(); // Updating database migrations to latest version
+	await AppDataSource.initialize();
+	// await orm. // Updating database migrations to latest version
 	const RedisStore = connectRedis(session);
 	const redis = new Redis();
 
@@ -50,7 +50,7 @@ const main = async () => {
 			resolvers: [HelloResolver, PostResolver, UserResolver],
 			validate: false
 		}),
-		context: ({ req, res }) => ({ em: orm.em, req, res, redis })
+		context: ({ req, res }) => ({ req, res, redis })
 
 		// Uncomment the following block to enable testing using apollo sandbox in browser
 		// formatResponse: (responseFromServer, query) => {
