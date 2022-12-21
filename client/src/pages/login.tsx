@@ -6,9 +6,10 @@ import { useRouter } from 'next/router';
 
 import Wrapper from '../components/Wrapper';
 import InputField from '../components/InputField';
-import { useLoginMutation } from '../gql/graphql';
+import { FieldError, useLoginMutation } from '../gql/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import Link from 'next/link';
 
 interface LoginProps {}
 
@@ -22,7 +23,11 @@ const Login: React.FC<LoginProps> = () => {
 				onSubmit={async (values, { setErrors }) => {
 					const response = await login(values);
 					if (response.data?.login.errors) {
-						setErrors(toErrorMap(response.data.login.errors));
+						setErrors(
+							toErrorMap(
+								response.data.login.errors as FieldError[]
+							)
+						);
 					} else if (response.data?.login.user) {
 						// user login works
 						router.push('/');
@@ -45,10 +50,16 @@ const Login: React.FC<LoginProps> = () => {
 						</Box>
 						<Button
 							mt={5}
+							mr={2}
 							color='teal'
 							type='submit'
 							isLoading={isSubmitting}>
 							Login
+						</Button>
+						<Button mt={5} color='teal'>
+							<Link href='/password-reset' color='coral'>
+								Forgot Password
+							</Link>
 						</Button>
 					</Form>
 				)}
