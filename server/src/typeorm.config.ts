@@ -13,7 +13,7 @@ const AppDataSource = new DataSource({
 	database: 'reddit',
 	entities: [User, Post],
 	synchronize: true,
-	// logging: true,
+	logging: true,
 	migrations: {
 		path: path.join(__dirname, './migrations'),
 		glob: '!(*.d).{js,ts}'

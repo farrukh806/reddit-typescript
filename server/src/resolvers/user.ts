@@ -12,39 +12,13 @@ import argon2 from 'argon2';
 import { v4 } from 'uuid';
 
 import { User } from './../entities/User';
-import { MyContext } from './../types';
+import { MyContext } from '../contextTypes';
 import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from '../constants';
 import { sendEmail } from '../utils/sendMail';
-
-@InputType()
-class UsernamePasswordInputType {
-	@Field()
-	username!: string;
-
-	@Field()
-	email!: string;
-
-	@Field()
-	password!: string;
-}
-
-@ObjectType()
-class FieldError {
-	@Field(() => String)
-	message?: string;
-
-	@Field(() => String)
-	field?: string;
-}
-
-@ObjectType()
-class UserResponseType {
-	@Field(() => [FieldError], { nullable: true })
-	errors?: FieldError[];
-
-	@Field(() => User, { nullable: true })
-	user?: User;
-}
+import {
+	UserResponseType,
+	UsernamePasswordInputType
+} from '../types/User';
 
 @Resolver()
 export class UserResolver {
