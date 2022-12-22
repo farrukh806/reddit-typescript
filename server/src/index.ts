@@ -15,6 +15,7 @@ import { COOKIE_NAME } from './constants';
 
 const main = async () => {
 	await AppDataSource.initialize();
+	await AppDataSource.runMigrations();
 
 	// await orm. // Updating database migrations to latest version
 	const RedisStore = connectRedis(session);

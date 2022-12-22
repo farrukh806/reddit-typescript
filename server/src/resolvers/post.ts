@@ -6,7 +6,9 @@ import {
 	Mutation,
 	Ctx,
 	UseMiddleware,
-	Int
+	Int,
+	FieldResolver,
+	Root
 } from 'type-graphql';
 
 import { PostInputType } from '../types/Post';
@@ -14,11 +16,16 @@ import { MyContext } from '../contextTypes';
 import { isAuth } from '../middlewares/isAuth';
 import AppDataSource from '../typeorm.config';
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+	@FieldResolver(() => String)
+	descriptionSnippet(@Root() root: Post) {
+		return root.description.slice(0, 50);
+	}
+
 	@Query(() => [Post])
 	async posts(
-		@Arg('limit') limit: number,
+		@Arg('limit', () => Int) limit: number,
 		@Arg('cursor', () => String, { nullable: true }) cursor: string | null
 	): Promise<Post[]> {
 		const realLimit = Math.min(50, limit);

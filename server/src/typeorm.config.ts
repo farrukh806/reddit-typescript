@@ -14,10 +14,7 @@ const AppDataSource = new DataSource({
 	entities: [User, Post],
 	synchronize: true,
 	logging: true,
-	migrations: {
-		path: path.join(__dirname, './migrations'),
-		glob: '!(*.d).{js,ts}'
-	}
+	migrations: [path.join(__dirname, './migrations/*')]
 });
 
 export default AppDataSource;
