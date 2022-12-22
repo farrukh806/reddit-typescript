@@ -14,8 +14,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "fragment regular_error on FieldError {\n  field\n  message\n}": types.Regular_ErrorFragmentDoc,
+    "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}": types.Regular_PostFragmentDoc,
     "fragment regular_user on User {\n  id\n  username\n  email\n}": types.Regular_UserFragmentDoc,
     "mutation ChangePassword($token: String!, $newPassword: String!) {\n  changePassword(token: $token, newPassword: $newPassword) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.ChangePasswordDocument,
+    "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}": types.CreatePostDocument,
     "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
     "mutation Login($usernameOrEmail: String!, $password: String!) {\n  login(usernameOrEmail: $usernameOrEmail, password: $password) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
@@ -31,11 +33,19 @@ export function graphql(source: "fragment regular_error on FieldError {\n  field
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}"): (typeof documents)["fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "fragment regular_user on User {\n  id\n  username\n  email\n}"): (typeof documents)["fragment regular_user on User {\n  id\n  username\n  email\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation ChangePassword($token: String!, $newPassword: String!) {\n  changePassword(token: $token, newPassword: $newPassword) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}"): (typeof documents)["mutation ChangePassword($token: String!, $newPassword: String!) {\n  changePassword(token: $token, newPassword: $newPassword) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}"): (typeof documents)["mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,0 +1,9 @@
+fragment regular_post on Post {
+	id
+	title
+	description
+	points
+	creator_id
+	created_at
+	updated_at
+}

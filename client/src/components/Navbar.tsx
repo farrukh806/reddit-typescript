@@ -12,7 +12,13 @@ const Navbar: React.FC<NavbarProps> = () => {
 	const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
 
 	return (
-		<Flex bg={'teal'} p={4} ml={'auto'}>
+		<Flex
+			position='sticky'
+			top='0'
+			zIndex={1}
+			bg={'teal'}
+			p={4}
+			ml={'auto'}>
 			<Box p={3} ml={'auto'}>
 				{!data?.me ? (
 					<div>
@@ -28,11 +34,18 @@ const Navbar: React.FC<NavbarProps> = () => {
 					</div>
 				) : (
 					<Flex>
-						<Box>{data.me.username}</Box>
+						<Box mr='3' style={{ color: 'white' }}>
+							{data.me.username}
+						</Box>
+						<NextLink
+							style={{ color: 'white' }}
+							href='/create-post'>
+							Create post
+						</NextLink>
 						<Button
 							variant={'link'}
-							color='black'
-							ml='4'
+							color='white'
+							ml='3'
 							isLoading={logoutFetching}
 							onClick={() => {
 								logout();

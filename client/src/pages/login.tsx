@@ -1,23 +1,23 @@
-import React from 'react';
 import { Form, Formik } from 'formik';
 import { Box, Button } from '@chakra-ui/react';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-import Wrapper from '../components/Wrapper';
 import InputField from '../components/InputField';
 import { FieldError, useLoginMutation } from '../gql/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import Link from 'next/link';
+import Layout from '../components/Layout';
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
 	const [_, login] = useLoginMutation();
 	const router = useRouter();
+	const { next } = router.query;
 	return (
-		<Wrapper>
+		<Layout>
 			<Formik
 				initialValues={{ usernameOrEmail: '', password: '' }}
 				onSubmit={async (values, { setErrors }) => {
@@ -29,8 +29,12 @@ const Login: React.FC<LoginProps> = () => {
 							)
 						);
 					} else if (response.data?.login.user) {
-						// user login works
-						router.push('/');
+						// user login works 
+						if (typeof next === 'string') {
+							router.push(next);
+						} else {
+							router.push('/');
+						}
 					}
 				}}>
 				{({ isSubmitting }) => (
@@ -64,7 +68,7 @@ const Login: React.FC<LoginProps> = () => {
 					</Form>
 				)}
 			</Formik>
-		</Wrapper>
+		</Layout>
 	);
 };
 
