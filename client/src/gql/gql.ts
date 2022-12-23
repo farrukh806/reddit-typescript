@@ -23,7 +23,7 @@ const documents = {
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: UsernamePasswordInputType!) {\n  register(options: $options) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.RegisterDocument,
     "query Me {\n  me {\n    ...regular_user\n  }\n}": types.MeDocument,
-    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    id\n    created_at\n    updated_at\n    title\n    descriptionSnippet\n  }\n}": types.PostsDocument,
+    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}": types.PostsDocument,
 };
 
 /**
@@ -69,7 +69,7 @@ export function graphql(source: "query Me {\n  me {\n    ...regular_user\n  }\n}
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    id\n    created_at\n    updated_at\n    title\n    descriptionSnippet\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    id\n    created_at\n    updated_at\n    title\n    descriptionSnippet\n  }\n}"];
+export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}"];
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

@@ -1,9 +1,13 @@
 query Posts($limit: Int!, $cursor: String) {
 	posts(limit: $limit, cursor: $cursor) {
-		id
-		created_at
-		updated_at
-		title
-		descriptionSnippet
+		posts {
+			id
+			title
+			descriptionSnippet
+			created_at
+			updated_at
+			creator_id
+		}
+		hasMore
 	}
 }

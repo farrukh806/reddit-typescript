@@ -15,6 +15,124 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
 };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+	ID: string;
+	String: string;
+	Boolean: boolean;
+	Int: number;
+	Float: number;
+};
+
+export type FieldError = {
+	__typename?: 'FieldError';
+	field: Scalars['String'];
+	message: Scalars['String'];
+};
+
+export type Mutation = {
+	__typename?: 'Mutation';
+	changePassword: UserResponseType;
+	createPost: Post;
+	deletePost: Scalars['Boolean'];
+	forgotPassword: Scalars['Boolean'];
+	login: UserResponseType;
+	logout: Scalars['Boolean'];
+	register: UserResponseType;
+	updatePost?: Maybe<Post>;
+};
+
+export type MutationChangePasswordArgs = {
+	newPassword: Scalars['String'];
+	token: Scalars['String'];
+};
+
+export type MutationCreatePostArgs = {
+	input: PostInputType;
+};
+
+export type MutationDeletePostArgs = {
+	id: Scalars['Float'];
+};
+
+export type MutationForgotPasswordArgs = {
+	email: Scalars['String'];
+};
+
+export type MutationLoginArgs = {
+	password: Scalars['String'];
+	usernameOrEmail: Scalars['String'];
+};
+
+export type MutationRegisterArgs = {
+	options: UsernamePasswordInputType;
+};
+
+export type MutationUpdatePostArgs = {
+	description: Scalars['String'];
+	id: Scalars['Float'];
+	title: Scalars['String'];
+};
+
+export type PaginatedPosts = {
+	__typename?: 'PaginatedPosts';
+	hasMore: Scalars['Boolean'];
+	posts: Array<Post>;
+};
+
+export type Post = {
+	__typename?: 'Post';
+	created_at: Scalars['String'];
+	creator_id: Scalars['Float'];
+	description: Scalars['String'];
+	descriptionSnippet: Scalars['String'];
+	id: Scalars['Float'];
+	points: Scalars['Float'];
+	title: Scalars['String'];
+	updated_at: Scalars['String'];
+};
+
+export type PostInputType = {
+	description: Scalars['String'];
+	title: Scalars['String'];
+};
+
+export type Query = {
+	__typename?: 'Query';
+	hello: Scalars['String'];
+	me?: Maybe<User>;
+	post?: Maybe<Post>;
+	posts: PaginatedPosts;
+};
+
+export type QueryPostArgs = {
+	id: Scalars['Float'];
+};
+
+export type QueryPostsArgs = {
+	cursor?: InputMaybe<Scalars['String']>;
+	limit: Scalars['Int'];
+};
+
+export type User = {
+	__typename?: 'User';
+	created_at: Scalars['String'];
+	email: Scalars['String'];
+	id: Scalars['Float'];
+	updated_at: Scalars['String'];
+	username: Scalars['String'];
+};
+
+export type UserResponseType = {
+	__typename?: 'UserResponseType';
+	errors?: Maybe<Array<FieldError>>;
+	user?: Maybe<User>;
+};
+
+export type UsernamePasswordInputType = {
+	email: Scalars['String'];
+	password: Scalars['String'];
+	username: Scalars['String'];
+};
 
 export type Regular_ErrorFragment = {
 	__typename?: 'FieldError';
@@ -161,128 +279,18 @@ export type PostsQueryVariables = Exact<{
 
 export type PostsQuery = {
 	__typename?: 'Query';
-	posts: Array<{
-		__typename?: 'Post';
-		id: number;
-		created_at: string;
-		updated_at: string;
-		title: string;
-		descriptionSnippet: string;
-	}>;
-};
-
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-	ID: string;
-	String: string;
-	Boolean: boolean;
-	Int: number;
-	Float: number;
-};
-
-export type FieldError = {
-	__typename?: 'FieldError';
-	field: Scalars['String'];
-	message: Scalars['String'];
-};
-
-export type Mutation = {
-	__typename?: 'Mutation';
-	changePassword: UserResponseType;
-	createPost: Post;
-	deletePost: Scalars['Boolean'];
-	forgotPassword: Scalars['Boolean'];
-	login: UserResponseType;
-	logout: Scalars['Boolean'];
-	register: UserResponseType;
-	updatePost?: Maybe<Post>;
-};
-
-export type MutationChangePasswordArgs = {
-	newPassword: Scalars['String'];
-	token: Scalars['String'];
-};
-
-export type MutationCreatePostArgs = {
-	input: PostInputType;
-};
-
-export type MutationDeletePostArgs = {
-	id: Scalars['Float'];
-};
-
-export type MutationForgotPasswordArgs = {
-	email: Scalars['String'];
-};
-
-export type MutationLoginArgs = {
-	password: Scalars['String'];
-	usernameOrEmail: Scalars['String'];
-};
-
-export type MutationRegisterArgs = {
-	options: UsernamePasswordInputType;
-};
-
-export type MutationUpdatePostArgs = {
-	description: Scalars['String'];
-	id: Scalars['Float'];
-	title: Scalars['String'];
-};
-
-export type Post = {
-	__typename?: 'Post';
-	created_at: Scalars['String'];
-	creator_id: Scalars['Float'];
-	description: Scalars['String'];
-	descriptionSnippet: Scalars['String'];
-	id: Scalars['Float'];
-	points: Scalars['Float'];
-	title: Scalars['String'];
-	updated_at: Scalars['String'];
-};
-
-export type PostInputType = {
-	description: Scalars['String'];
-	title: Scalars['String'];
-};
-
-export type Query = {
-	__typename?: 'Query';
-	hello: Scalars['String'];
-	me?: Maybe<User>;
-	post?: Maybe<Post>;
-	posts: Array<Post>;
-};
-
-export type QueryPostArgs = {
-	id: Scalars['Float'];
-};
-
-export type QueryPostsArgs = {
-	cursor?: InputMaybe<Scalars['String']>;
-	limit: Scalars['Int'];
-};
-
-export type User = {
-	__typename?: 'User';
-	created_at: Scalars['String'];
-	email: Scalars['String'];
-	id: Scalars['Float'];
-	updated_at: Scalars['String'];
-	username: Scalars['String'];
-};
-
-export type UserResponseType = {
-	__typename?: 'UserResponseType';
-	errors?: Maybe<Array<FieldError>>;
-	user?: Maybe<User>;
-};
-
-export type UsernamePasswordInputType = {
-	email: Scalars['String'];
-	password: Scalars['String'];
-	username: Scalars['String'];
+	posts: {
+		__typename?: 'PaginatedPosts';
+		hasMore: boolean;
+		posts: Array<{
+			__typename?: 'Post';
+			id: number;
+			title: string;
+			descriptionSnippet: string;
+			created_at: string;
+			updated_at: string;
+		}>;
+	};
 };
 
 export const Regular_ErrorFragmentDoc = gql`
@@ -427,11 +435,14 @@ export function useMeQuery(
 export const PostsDocument = gql`
 	query Posts($limit: Int!, $cursor: String) {
 		posts(limit: $limit, cursor: $cursor) {
-			id
-			created_at
-			updated_at
-			title
-			descriptionSnippet
+			posts {
+				id
+				title
+				descriptionSnippet
+				created_at
+				updated_at
+			}
+			hasMore
 		}
 	}
 `;
