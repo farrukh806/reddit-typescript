@@ -28,24 +28,39 @@ export class PostResolver {
 		@Arg('limit', () => Int) limit: number,
 		@Arg('cursor', () => String, { nullable: true }) cursor: string | null
 	): Promise<PaginatedPosts> {
-		const realLimit = Math.min(50, limit);
-		const reaLimitPlusOne = realLimit + 1;
-		const qb = AppDataSource.getRepository(Post)
-			.createQueryBuilder('p')
-			.orderBy('"created_at"', 'DESC')
-			.take(reaLimitPlusOne);
-
-		if (cursor) {
-			qb.where('"created_at" < :cursor', {
-				cursor: new Date(parseInt(cursor))
-			});
+		let realLimit = 0;
+		if (limit > 0) {
+			realLimit = Math.min(50, limit);
+		} else {
+			realLimit = 50;
 		}
-
-		const posts = await qb.getMany();
+		const realLimitPlusOne = realLimit + 1;
+		let replacements: any[] = [];
+		if (cursor) {
+			replacements.push(new Date(parseInt(cursor)));
+		}
+		replacements.push(realLimitPlusOne);
+		const posts = await AppDataSource.query(
+			`SELECT p.*, 
+			json_build_object(
+				'id', u.id,
+				'username', u.username,
+				'email', u.email,
+				'created_at', u.created_at,
+				'updated_at', u.updated_at
+				) creator
+			FROM post p
+			INNER JOIN public.user u 
+			ON u.id = p.creator_id 
+			${cursor ? `WHERE p.created_at < $2` : ''}
+			ORDER BY p.created_at DESC 
+			limit $1`,
+			replacements
+		);
 
 		return {
 			posts: posts.slice(0, realLimit),
-			hasMore: posts.length === reaLimitPlusOne
+			hasMore: posts.length === realLimitPlusOne
 		};
 	}
 
