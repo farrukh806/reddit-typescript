@@ -14,16 +14,17 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "fragment regular_error on FieldError {\n  field\n  message\n}": types.Regular_ErrorFragmentDoc,
-    "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}": types.Regular_PostFragmentDoc,
+    "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n  creator {\n    id\n    username\n  }\n}": types.Regular_PostFragmentDoc,
     "fragment regular_user on User {\n  id\n  username\n  email\n}": types.Regular_UserFragmentDoc,
     "mutation ChangePassword($token: String!, $newPassword: String!) {\n  changePassword(token: $token, newPassword: $newPassword) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.ChangePasswordDocument,
-    "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}": types.CreatePostDocument,
+    "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}": types.CreatePostDocument,
     "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
     "mutation Login($usernameOrEmail: String!, $password: String!) {\n  login(usernameOrEmail: $usernameOrEmail, password: $password) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: UsernamePasswordInputType!) {\n  register(options: $options) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.RegisterDocument,
+    "mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}": types.VoteDocument,
     "query Me {\n  me {\n    ...regular_user\n  }\n}": types.MeDocument,
-    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}": types.PostsDocument,
+    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      points\n      descriptionSnippet\n      created_at\n      updated_at\n      creator {\n        username\n        id\n      }\n    }\n    hasMore\n  }\n}": types.PostsDocument,
 };
 
 /**
@@ -33,7 +34,7 @@ export function graphql(source: "fragment regular_error on FieldError {\n  field
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}"): (typeof documents)["fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n}"];
+export function graphql(source: "fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n  creator {\n    id\n    username\n  }\n}"): (typeof documents)["fragment regular_post on Post {\n  id\n  title\n  description\n  points\n  creator_id\n  created_at\n  updated_at\n  creator {\n    id\n    username\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -45,7 +46,7 @@ export function graphql(source: "mutation ChangePassword($token: String!, $newPa
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}"): (typeof documents)["mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    ...regular_post\n  }\n}"];
+export function graphql(source: "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"): (typeof documents)["mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -65,11 +66,15 @@ export function graphql(source: "mutation Register($options: UsernamePasswordInp
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}"): (typeof documents)["mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "query Me {\n  me {\n    ...regular_user\n  }\n}"): (typeof documents)["query Me {\n  me {\n    ...regular_user\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      descriptionSnippet\n      created_at\n      updated_at\n    }\n    hasMore\n  }\n}"];
+export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      points\n      descriptionSnippet\n      created_at\n      updated_at\n      creator {\n        username\n        id\n      }\n    }\n    hasMore\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      points\n      descriptionSnippet\n      created_at\n      updated_at\n      creator {\n        username\n        id\n      }\n    }\n    hasMore\n  }\n}"];
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

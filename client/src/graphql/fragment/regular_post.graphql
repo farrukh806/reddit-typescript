@@ -6,4 +6,8 @@ fragment regular_post on Post {
 	creator_id
 	created_at
 	updated_at
+	creator {
+		id
+		username
+	}
 }

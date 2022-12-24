@@ -5,10 +5,11 @@ import { withUrqlClient } from 'next-urql';
 import { usePostsQuery } from '../gql/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import Layout from '../components/Layout';
+import UpdootSection from '../components/UpdootSection';
 
 const Index = () => {
 	const [variables, setVariables] = useState({
-		limit: 100,
+		limit: 50,
 		cursor: null as null | string
 	});
 	const [{ data, fetching }] = usePostsQuery({
@@ -20,10 +21,16 @@ const Index = () => {
 			<Stack spacing={8}>
 				<Heading>LeReddit</Heading>
 				{data?.posts.posts.map((post) => (
-					<Box key={post.id} borderWidth='1px' shadow='md'>
-						<Heading p='4'>{post.title}</Heading>
-						<Text p='4'>{post.descriptionSnippet}</Text>
-					</Box>
+					<Flex key={post.id} borderWidth='1px' shadow='md'>
+						<UpdootSection post={post} />
+						<Box>
+							<Heading p='2'>{post.title}</Heading>
+							<Text px='4'>
+								posted by {post.creator.username}
+							</Text>
+							<Text p='4'>{post.descriptionSnippet}</Text>
+						</Box>
+					</Flex>
 				))}
 				{!data && !fetching ? <div>No posts available</div> : null}1
 			</Stack>

@@ -1,5 +1,11 @@
 mutation CreatePost($input: PostInputType!) {
 	createPost(input: $input) {
-		...regular_post
+		id
+		title
+		description
+		points
+		creator_id
+		created_at
+		updated_at
 	}
 }
