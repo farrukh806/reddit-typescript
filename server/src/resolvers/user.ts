@@ -3,10 +3,7 @@ import {
 	Mutation,
 	Query,
 	Arg,
-	InputType,
-	Field,
 	Ctx,
-	ObjectType,
 	FieldResolver,
 	Root
 } from 'type-graphql';

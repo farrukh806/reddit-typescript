@@ -15,6 +15,7 @@ import { PaginatedPosts, PostInputType } from '../types/Post';
 import { MyContext } from '../contextTypes';
 import { isAuth } from '../middlewares/isAuth';
 import AppDataSource from '../typeorm.config';
+import { Updoot } from '../entities/Updoot';
 
 @Resolver(Post)
 export class PostResolver {
@@ -26,7 +27,8 @@ export class PostResolver {
 	@Query(() => PaginatedPosts)
 	async posts(
 		@Arg('limit', () => Int) limit: number,
-		@Arg('cursor', () => String, { nullable: true }) cursor: string | null
+		@Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+		@Ctx() ctx: MyContext
 	): Promise<PaginatedPosts> {
 		let realLimit = 0;
 		if (limit > 0) {
@@ -35,11 +37,19 @@ export class PostResolver {
 			realLimit = 50;
 		}
 		const realLimitPlusOne = realLimit + 1;
+
 		let replacements: any[] = [];
+		replacements.push(realLimitPlusOne);
+
+		if (ctx.req.session.userId) {
+			replacements.push(ctx.req.session.userId);
+		}
+
+		let cursorIdx = 3;
 		if (cursor) {
 			replacements.push(new Date(parseInt(cursor)));
+			cursorIdx = replacements.length;
 		}
-		replacements.push(realLimitPlusOne);
 		const posts = await AppDataSource.query(
 			`SELECT p.*, 
 			json_build_object(
@@ -48,11 +58,16 @@ export class PostResolver {
 				'email', u.email,
 				'created_at', u.created_at,
 				'updated_at', u.updated_at
-				) creator
+				) creator,
+			${
+				ctx.req.session.userId
+					? '(SELECT value FROM updoot where user_id = $2 AND post_id = p.id) vote_status'
+					: 'null as vote_status'
+			}
 			FROM post p
 			INNER JOIN public.user u 
 			ON u.id = p.creator_id 
-			${cursor ? `WHERE p.created_at < $2` : ''}
+			${cursor ? `WHERE p.created_at < $${cursorIdx}` : ''}
 			ORDER BY p.created_at DESC 
 			limit $1`,
 			replacements
@@ -103,6 +118,49 @@ export class PostResolver {
 			await Post.save(post);
 		}
 		return post;
+	}
+
+	@Mutation(() => Boolean)
+	@UseMiddleware(isAuth)
+	async vote(
+		@Arg('post_id', () => Int) post_id: number,
+		@Arg('value', () => Int) value: number,
+		@Ctx() ctx: MyContext
+	) {
+		const isUpdoot = value !== -1;
+		const vote = isUpdoot ? 1 : -1;
+		const user_id = ctx.req.session.userId;
+
+		// check if user is already voted
+		const updoot = await Updoot.findOne({ where: { post_id, user_id } });
+		// and they want to change their vote
+		if (updoot && updoot.value !== vote) {
+			await AppDataSource.transaction(async (trManager) => {
+				await trManager.query(
+					`UPDATE updoot SET value = $1 WHERE post_id = $2 AND user_id = $3`,
+					[vote, post_id, user_id]
+				);
+				await trManager.query(
+					`UPDATE post SET points = points + $1 WHERE id = $2`,
+					[2 * vote, post_id]
+				);
+			});
+		} else if (!updoot) {
+			// they never voted before
+			await AppDataSource.transaction(async (trManager) => {
+				await trManager.query(
+					`INSERT INTO updoot (user_id, post_id, value) VALUES ($1, $2, $3)`,
+					[user_id, post_id, vote]
+				);
+
+				await trManager.query(
+					`UPDATE post SET points = points + $1 WHERE id = $2`,
+					[vote, post_id]
+				);
+			});
+		}
+
+		return true;
 	}
 
 	@Mutation(() => Boolean)
