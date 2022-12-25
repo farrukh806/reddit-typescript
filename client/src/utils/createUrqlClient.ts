@@ -10,7 +10,10 @@ import {
 	MeDocument,
 	RegisterMutation,
 	LogoutMutation,
-	VoteMutationVariables
+	VoteMutationVariables,
+	VoteMutation,
+	VoteDocument,
+	PostsQuery
 } from '../gql/graphql';
 import { betterUpdateQuery } from './betterUpdateQuery';
 import { isServer } from './isServer';
@@ -67,7 +70,7 @@ const cursorPagination = (): Resolver => {
 };
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
 	let cookieValue = '';
-	if (isServer() && ctx.req.headers.cookie) {
+	if (isServer() && ctx?.req.headers.cookie) {
 		cookieValue = ctx.req.headers.cookie?.split(';')[4]?.trim();
 	}
 

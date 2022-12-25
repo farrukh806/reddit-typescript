@@ -80,8 +80,25 @@ export class PostResolver {
 	}
 
 	@Query(() => Post, { nullable: true })
-	post(@Arg('id') id: number): Promise<Post | null> {
-		return Post.findOne({ where: { id } });
+	async post(@Arg('id', () => Int) id: number): Promise<Post | null> {
+		const replacements = [id];
+		const post = await AppDataSource.query(
+			`
+			SELECT p.*, 
+			json_build_object(
+				'id', u.id,
+				'username', u.username,
+				'created_at', u.created_at,
+				'updated_at', u.updated_at
+				) creator
+				FROM post p
+				INNER JOIN public.user u 
+				ON u.id = p.creator_id 
+				WHERE p.id = $1
+				`,
+			replacements
+		);
+		return post[0];
 	}
 
 	@Mutation(() => Post)

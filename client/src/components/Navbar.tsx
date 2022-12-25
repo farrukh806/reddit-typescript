@@ -1,6 +1,5 @@
-import React from 'react';
-import { Box, Flex, Button } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Box, Flex, Button, Heading } from '@chakra-ui/react';
+import Link from 'next/link';
 
 import { useMeQuery, useLogoutMutation } from '../gql/graphql';
 import { isServer } from '../utils/isServer';
@@ -19,29 +18,30 @@ const Navbar: React.FC<NavbarProps> = () => {
 			bg={'teal'}
 			p={4}
 			ml={'auto'}>
+			<Link href={'/'}>
+				<Heading>LeReddit</Heading>
+			</Link>
 			<Box p={3} ml={'auto'}>
 				{!data?.me ? (
 					<div>
-						<NextLink
+						<Link
 							href={'/login'}
 							style={{ color: 'white', margin: '12px' }}>
 							Login
-						</NextLink>
+						</Link>
 
-						<NextLink href={'/register'} style={{ color: 'white' }}>
+						<Link href={'/register'} style={{ color: 'white' }}>
 							Register
-						</NextLink>
+						</Link>
 					</div>
 				) : (
 					<Flex>
 						<Box mr='3' style={{ color: 'white' }}>
 							{data.me.username}
 						</Box>
-						<NextLink
-							style={{ color: 'white' }}
-							href='/create-post'>
+						<Link style={{ color: 'white' }} href='/create-post'>
 							Create post
-						</NextLink>
+						</Link>
 						<Button
 							variant={'link'}
 							color='white'

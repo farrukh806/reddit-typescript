@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -168,6 +169,25 @@ export type MeQuery = {
 		| null;
 };
 
+export type PostQueryVariables = Exact<{
+	id: Scalars['Int'];
+}>;
+
+export type PostQuery = {
+	__typename?: 'Query';
+	post?: {
+		__typename?: 'Post';
+		id: number;
+		title: string;
+		points: number;
+		descriptionSnippet: string;
+		created_at: string;
+		updated_at: string;
+		vote_status?: number | null;
+		creator: { __typename?: 'User'; username: string; id: number };
+	} | null;
+};
+
 export type PostsQueryVariables = Exact<{
 	limit: Scalars['Int'];
 	cursor?: InputMaybe<Scalars['String']>;
@@ -191,7 +211,6 @@ export type PostsQuery = {
 		}>;
 	};
 };
-
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
 	ID: string;
@@ -291,7 +310,7 @@ export type Query = {
 };
 
 export type QueryPostArgs = {
-	id: Scalars['Float'];
+	id: Scalars['Int'];
 };
 
 export type QueryPostsArgs = {
@@ -474,6 +493,32 @@ export function useMeQuery(
 ) {
 	return Urql.useQuery<MeQuery, MeQueryVariables>({
 		query: MeDocument,
+		...options
+	});
+}
+export const PostDocument = gql`
+	query Post($id: Int!) {
+		post(id: $id) {
+			id
+			title
+			points
+			descriptionSnippet
+			created_at
+			updated_at
+			vote_status
+			creator {
+				username
+				id
+			}
+		}
+	}
+`;
+
+export function usePostQuery(
+	options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'>
+) {
+	return Urql.useQuery<PostQuery, PostQueryVariables>({
+		query: PostDocument,
 		...options
 	});
 }

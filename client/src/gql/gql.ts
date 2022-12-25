@@ -24,6 +24,7 @@ const documents = {
     "mutation Register($options: UsernamePasswordInputType!) {\n  register(options: $options) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.RegisterDocument,
     "mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}": types.VoteDocument,
     "query Me {\n  me {\n    ...regular_user\n  }\n}": types.MeDocument,
+    "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}": types.PostDocument,
     "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      points\n      descriptionSnippet\n      created_at\n      updated_at\n      vote_status\n      creator {\n        username\n        id\n      }\n    }\n    hasMore\n  }\n}": types.PostsDocument,
 };
 
@@ -71,6 +72,10 @@ export function graphql(source: "mutation Vote($post_id: Int!, $value: Int!) {\n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query Me {\n  me {\n    ...regular_user\n  }\n}"): (typeof documents)["query Me {\n  me {\n    ...regular_user\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"): (typeof documents)["query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
