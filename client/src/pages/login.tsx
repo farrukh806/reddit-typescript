@@ -29,7 +29,7 @@ const Login: React.FC<LoginProps> = () => {
 							)
 						);
 					} else if (response.data?.login.user) {
-						// user login works 
+						// user login works
 						if (typeof next === 'string') {
 							router.push(next);
 						} else {
@@ -72,4 +72,4 @@ const Login: React.FC<LoginProps> = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient)(Login);
+export default withUrqlClient(createUrqlClient as any)(Login);

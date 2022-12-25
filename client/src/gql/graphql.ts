@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -15,6 +14,7 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
 };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
+
 export type Regular_ErrorFragment = {
 	__typename?: 'FieldError';
 	field: string;
@@ -186,6 +186,7 @@ export type PostsQuery = {
 			descriptionSnippet: string;
 			created_at: string;
 			updated_at: string;
+			vote_status?: number | null;
 			creator: { __typename?: 'User'; username: string; id: number };
 		}>;
 	};
@@ -273,6 +274,7 @@ export type Post = {
 	points: Scalars['Float'];
 	title: Scalars['String'];
 	updated_at: Scalars['String'];
+	vote_status?: Maybe<Scalars['Int']>;
 };
 
 export type PostInputType = {
@@ -485,6 +487,7 @@ export const PostsDocument = gql`
 				descriptionSnippet
 				created_at
 				updated_at
+				vote_status
 				creator {
 					username
 					id

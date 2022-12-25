@@ -66,4 +66,4 @@ const Register: React.FC<RegisterProps> = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient)(Register);
+export default withUrqlClient(createUrqlClient as any)(Register);

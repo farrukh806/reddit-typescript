@@ -66,4 +66,4 @@ const ChangePassword: NextPage<{ token: string }> = (props) => {
 ChangePassword.getInitialProps = (context) => {
 	return { token: context.query.token as string };
 };
-export default withUrqlClient(createUrqlClient)(ChangePassword);
+export default withUrqlClient(createUrqlClient as any)(ChangePassword);

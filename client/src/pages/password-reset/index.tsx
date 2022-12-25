@@ -49,4 +49,4 @@ const ChangePasswordForm: React.FC = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient)(ChangePasswordForm);
+export default withUrqlClient(createUrqlClient as any)(ChangePasswordForm);
