@@ -1,5 +1,5 @@
 import path from 'path';
-
+import 'dotenv-safe/config';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
 import { DataSource } from 'typeorm';
@@ -7,11 +7,7 @@ import { Updoot } from './entities/Updoot';
 
 const AppDataSource = new DataSource({
 	type: 'postgres',
-	host: 'localhost',
-	port: 5432,
-	username: 'postgres',
-	password: 'postgres',
-	database: 'reddit',
+	url: process.env.DATABASE_URL,
 	entities: [User, Post, Updoot],
 	synchronize: true,
 	logging: true,

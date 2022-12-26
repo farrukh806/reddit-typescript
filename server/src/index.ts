@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'dotenv-safe';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
@@ -19,12 +20,17 @@ const main = async () => {
 
 	// await orm. // Updating database migrations to latest version
 	const RedisStore = connectRedis(session);
-	const redis = new Redis();
+	const redis = new Redis({
+		host: process.env.REDIS_HOST,
+		username: process.env.REDIS_USERNAME,
+		port: parseInt(process.env.REDIS_PORT!),
+		password: process.env.REDIS_PASSWORD
+	});
 
 	const app = express();
 	app.use(
 		cors({
-			origin: 'http://localhost:3000',
+			origin: process.env.CORS_ORIGIN,
 			credentials: true
 		})
 	);
@@ -41,7 +47,7 @@ const main = async () => {
 				sameSite: 'lax', // csrf protection
 				secure: false // works with HTTPS and HTTP also
 			},
-			secret: 'bssecret',
+			secret: process.env.SESSION_SECRET!,
 			saveUninitialized: false,
 			resave: false
 		})
@@ -72,6 +78,8 @@ const main = async () => {
 		cors: false
 	});
 
-	app.listen(4000, () => console.log('Server started on localhost:4000'));
+	app.listen(process.env.PORT, () =>
+		console.log('Server started on localhost: ' + process.env.PORT)
+	);
 };
 main().catch((err) => console.error(err));
