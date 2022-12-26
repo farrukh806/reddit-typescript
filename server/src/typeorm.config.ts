@@ -1,5 +1,4 @@
 import path from 'path';
-import 'dotenv-safe/config';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
 import { DataSource } from 'typeorm';
