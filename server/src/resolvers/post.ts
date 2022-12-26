@@ -117,12 +117,16 @@ export class PostResolver {
 	}
 
 	@Mutation(() => Post, { nullable: true })
+	@UseMiddleware(isAuth)
 	async updatePost(
-		@Arg('id') id: number,
+		@Arg('id', () => Int) id: number,
 		@Arg('title') title: string,
-		@Arg('description') description: string
+		@Arg('description') description: string,
+		@Ctx() ctx: MyContext
 	): Promise<Post | null> {
-		const post = await Post.findOne({ where: { id } });
+		const post = await Post.findOne({
+			where: { id, creator_id: ctx.req.session.userId }
+		});
 		if (!post) {
 			return null;
 		}
