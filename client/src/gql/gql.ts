@@ -23,9 +23,10 @@ const documents = {
     "mutation Login($usernameOrEmail: String!, $password: String!) {\n  login(usernameOrEmail: $usernameOrEmail, password: $password) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: UsernamePasswordInputType!) {\n  register(options: $options) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.RegisterDocument,
+    "mutation UpdatePost($id: Int!, $title: String!, $description: String!) {\n  updatePost(id: $id, title: $title, description: $description) {\n    id\n    title\n    description\n    descriptionSnippet\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}": types.UpdatePostDocument,
     "mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}": types.VoteDocument,
     "query Me {\n  me {\n    ...regular_user\n  }\n}": types.MeDocument,
-    "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}": types.PostDocument,
+    "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    description\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}": types.PostDocument,
     "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    posts {\n      id\n      title\n      points\n      descriptionSnippet\n      created_at\n      updated_at\n      vote_status\n      creator {\n        username\n        id\n      }\n    }\n    hasMore\n  }\n}": types.PostsDocument,
 };
 
@@ -72,6 +73,10 @@ export function graphql(source: "mutation Register($options: UsernamePasswordInp
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "mutation UpdatePost($id: Int!, $title: String!, $description: String!) {\n  updatePost(id: $id, title: $title, description: $description) {\n    id\n    title\n    description\n    descriptionSnippet\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"): (typeof documents)["mutation UpdatePost($id: Int!, $title: String!, $description: String!) {\n  updatePost(id: $id, title: $title, description: $description) {\n    id\n    title\n    description\n    descriptionSnippet\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}"): (typeof documents)["mutation Vote($post_id: Int!, $value: Int!) {\n  vote(post_id: $post_id, value: $value)\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -80,7 +85,7 @@ export function graphql(source: "query Me {\n  me {\n    ...regular_user\n  }\n}
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"): (typeof documents)["query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"];
+export function graphql(source: "query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    description\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"): (typeof documents)["query Post($id: Int!) {\n  post(id: $id) {\n    id\n    title\n    points\n    descriptionSnippet\n    description\n    created_at\n    updated_at\n    vote_status\n    creator {\n      username\n      id\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

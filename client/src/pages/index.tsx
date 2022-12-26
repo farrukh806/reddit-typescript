@@ -8,7 +8,7 @@ import {
 	Flex,
 	IconButton
 } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 import { withUrqlClient } from 'next-urql';
 
@@ -48,7 +48,9 @@ const Index = () => {
 								<Link
 									href={`/post/[id]`}
 									as={`/post/${post.id}`}>
-									{post.title}
+									{post.title.length > 20
+										? post.title.slice(0, 20) + '...'
+										: post.title}
 								</Link>
 							</Heading>
 							<Text px='4'>
@@ -57,15 +59,33 @@ const Index = () => {
 							<Text p='4'>{post.descriptionSnippet}</Text>
 						</Box>
 						<Box p='3' ml={'auto'}>
-							{userData && userData?.me &&
+							{userData &&
+								userData?.me &&
+								userData?.me!.id === post.creator.id && (
+									<Link
+										href='/post/edit/[id]'
+										as={`/post/edit/${post.id}`}>
+										<IconButton
+											size='md'
+											color='blue'
+											fontSize={'26px'}
+											aria-label='updoot-post'
+											icon={<EditIcon />}
+										/>
+									</Link>
+								)}
+							{userData &&
+								userData?.me &&
 								userData?.me!.id === post.creator.id && (
 									<IconButton
 										size='md'
+										mx='2'
+										color='red'
 										fontSize={'26px'}
 										aria-label='updoot-post'
 										icon={<DeleteIcon />}
 										onClick={async () => {
-											deletePost({id: post.id});
+											deletePost({ id: post.id });
 										}}
 									/>
 								)}

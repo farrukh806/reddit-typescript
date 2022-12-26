@@ -4,6 +4,7 @@ query Post($id: Int!) {
 		title
 		points
 		descriptionSnippet
+		description
 		created_at
 		updated_at
 		vote_status
