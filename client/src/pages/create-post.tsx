@@ -20,7 +20,6 @@ const CreatePost: React.FC = () => {
 				initialValues={{ title: '', description: '' }}
 				onSubmit={async (values, { setErrors }) => {
 					const { error } = await createPost({ input: values });
-					console.log(error);
 					if (!error) {
 						toast({
 							title: 'Post added',

@@ -57,7 +57,6 @@ const EditPost = () => {
 						title: values.title,
 						description: values.description
 					});
-					console.log(error);
 					if (!error) {
 						toast({
 							title: 'Post updated',
