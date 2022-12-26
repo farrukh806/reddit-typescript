@@ -1,21 +1,38 @@
 import { useState } from 'react';
-import { Stack, Box, Heading, Text, Button, Flex } from '@chakra-ui/react';
+import {
+	Stack,
+	Box,
+	Heading,
+	Text,
+	Button,
+	Flex,
+	IconButton
+} from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
+
 import { withUrqlClient } from 'next-urql';
 
-import { usePostsQuery } from '../gql/graphql';
+import {
+	useDeletePostMutation,
+	useMeQuery,
+	usePostsQuery
+} from '../gql/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import Layout from '../components/Layout';
 import UpdootSection from '../components/UpdootSection';
 import Link from 'next/link';
+import { isServer } from '../utils/isServer';
 
 const Index = () => {
 	const [variables, setVariables] = useState({
 		limit: 50,
 		cursor: null as null | string
 	});
+	const [{ data: userData }] = useMeQuery({ pause: isServer() });
 	const [{ data, fetching }] = usePostsQuery({
 		variables
 	});
+	const [_, deletePost] = useDeletePostMutation();
 	return (
 		<Layout>
 			{fetching && <div>Loading...</div>}
@@ -23,7 +40,9 @@ const Index = () => {
 				<Heading>LeReddit</Heading>
 				{data?.posts.posts.map((post) => (
 					<Flex key={post.id} borderWidth='1px' shadow='md'>
-						<UpdootSection post={post} />
+						<Box>
+							<UpdootSection post={post} />
+						</Box>
 						<Box>
 							<Heading p='2'>
 								<Link
@@ -36,6 +55,20 @@ const Index = () => {
 								posted by {post.creator.username}
 							</Text>
 							<Text p='4'>{post.descriptionSnippet}</Text>
+						</Box>
+						<Box p='3' ml={'auto'}>
+							{userData && userData?.me &&
+								userData?.me!.id === post.creator.id && (
+									<IconButton
+										size='md'
+										fontSize={'26px'}
+										aria-label='updoot-post'
+										icon={<DeleteIcon />}
+										onClick={async () => {
+											deletePost({id: post.id});
+										}}
+									/>
+								)}
 						</Box>
 					</Flex>
 				))}

@@ -18,6 +18,7 @@ const documents = {
     "fragment regular_user on User {\n  id\n  username\n  email\n}": types.Regular_UserFragmentDoc,
     "mutation ChangePassword($token: String!, $newPassword: String!) {\n  changePassword(token: $token, newPassword: $newPassword) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.ChangePasswordDocument,
     "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}": types.CreatePostDocument,
+    "mutation DeletePost($id: Int!) {\n  deletePost(id: $id)\n}": types.DeletePostDocument,
     "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
     "mutation Login($usernameOrEmail: String!, $password: String!) {\n  login(usernameOrEmail: $usernameOrEmail, password: $password) {\n    errors {\n      ...regular_error\n    }\n    user {\n      ...regular_user\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
@@ -48,6 +49,10 @@ export function graphql(source: "mutation ChangePassword($token: String!, $newPa
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"): (typeof documents)["mutation CreatePost($input: PostInputType!) {\n  createPost(input: $input) {\n    id\n    title\n    description\n    points\n    creator_id\n    created_at\n    updated_at\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation DeletePost($id: Int!) {\n  deletePost(id: $id)\n}"): (typeof documents)["mutation DeletePost($id: Int!) {\n  deletePost(id: $id)\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
