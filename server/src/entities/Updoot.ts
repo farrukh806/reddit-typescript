@@ -9,7 +9,7 @@ export class Updoot extends BaseEntity {
 	@Field()
 	@Column()
 	value!: number;
-    
+
 	@Field()
 	@PrimaryColumn()
 	user_id!: number;

@@ -181,8 +181,21 @@ export class PostResolver {
 	}
 
 	@Mutation(() => Boolean)
-	async deletePost(@Arg('id') id: number): Promise<boolean> {
-		const result = await Post.delete(id);
+	@UseMiddleware(isAuth)
+	async deletePost(
+		@Arg('id', () => Int) id: number,
+		@Ctx() ctx: MyContext
+	): Promise<boolean> {
+		const updoot = await Updoot.findOne({ where: { post_id: id } });
+		if (updoot) {
+			await Updoot.delete({
+				post_id: id
+			});
+		}
+		const result = await Post.delete({
+			id,
+			creator_id: ctx.req.session.userId
+		});
 
 		if (result.affected === 0) {
 			return false;
