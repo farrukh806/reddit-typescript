@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"watch": "tsc -w",
-		"build": "tsc",
+		"build": "tsc && node public/index.js",
 		"start": "node public/index.js",
 		"dev": "nodemon public/index.js",
 		"gen-env": "npx gen-env-types .env -o src/types/env.d.ts -e .",
