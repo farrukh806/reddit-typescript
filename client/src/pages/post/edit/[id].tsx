@@ -19,11 +19,12 @@ const EditPost = () => {
 		id = parseInt(id);
 	} else id = -1;
 
-	const [{ fetching, data, error }] = usePostQuery({
+	const { loading, data, error } = usePostQuery({
+		skip: id === -1,
 		variables: { id }
 	});
 
-	const [_, updatePost] = useUpdatePostMutation();
+	const [updatePost] = useUpdatePostMutation();
 
 	if (error) {
 		return (
@@ -40,7 +41,7 @@ const EditPost = () => {
 			</Layout>
 		);
 	}
-	if (fetching) {
+	if (loading) {
 		return <Layout>Loading...</Layout>;
 	}
 
@@ -52,12 +53,14 @@ const EditPost = () => {
 					description: data?.post?.description
 				}}
 				onSubmit={async (values, { setErrors }) => {
-					const { error } = await updatePost({
-						id,
-						title: values.title,
-						description: values.description
+					const { errors } = await updatePost({
+						variables: {
+							id,
+							title: values.title,
+							description: values.description
+						}
 					});
-					if (!error) {
+					if (!errors) {
 						toast({
 							title: 'Post updated',
 							status: 'success',
@@ -98,4 +101,4 @@ const EditPost = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient as any, { ssr: true })(EditPost);
+export default EditPost;

@@ -4,25 +4,23 @@ import { Formik, Form } from 'formik';
 import InputField from '../../components/InputField';
 import Wrapper from '../../components/Wrapper';
 import { useForgotPasswordMutation } from '../../gql/graphql';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../../utils/createUrqlClient';
 
 const ChangePasswordForm: React.FC = () => {
-	const [_, forgotPassword] = useForgotPasswordMutation();
-    const toast = useToast();
+	const [forgotPassword] = useForgotPasswordMutation();
+	const toast = useToast();
 	return (
 		<Wrapper>
 			<Formik
 				initialValues={{ email: '' }}
 				onSubmit={async (values, { setErrors }) => {
-					await forgotPassword(values);
-                        toast({
-                          title: "Email sent",
-                          description: " Email sent successfully",
-                          status: 'success',
-                          duration: 9000,
-                          isClosable: true,
-                        })
+					await forgotPassword({ variables: values });
+					toast({
+						title: 'Email sent',
+						description: ' Email sent successfully',
+						status: 'success',
+						duration: 9000,
+						isClosable: true
+					});
 				}}>
 				{({ isSubmitting }) => (
 					<Form>
@@ -49,4 +47,4 @@ const ChangePasswordForm: React.FC = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient as any)(ChangePasswordForm);
+export default ChangePasswordForm;

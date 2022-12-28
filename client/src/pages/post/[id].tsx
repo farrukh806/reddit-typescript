@@ -12,7 +12,7 @@ const Post = () => {
 	if (typeof id === 'string') {
 		id = parseInt(id);
 	} else id = -1;
-	const [{ fetching, data, error }] = usePostQuery({
+	const { data, error, loading } = usePostQuery({
 		variables: { id }
 	});
 
@@ -31,7 +31,7 @@ const Post = () => {
 			</Layout>
 		);
 	}
-	if (fetching) {
+	if (loading) {
 		return <Layout>Loading...</Layout>;
 	}
 
@@ -43,4 +43,4 @@ const Post = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient as any, { ssr: true })(Post);
+export default Post;

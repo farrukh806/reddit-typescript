@@ -10,32 +10,29 @@ import {
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
-import { withUrqlClient } from 'next-urql';
-
 import {
+	PostQuery,
 	useDeletePostMutation,
 	useMeQuery,
 	usePostsQuery
 } from '../gql/graphql';
-import { createUrqlClient } from '../utils/createUrqlClient';
 import Layout from '../components/Layout';
 import UpdootSection from '../components/UpdootSection';
 import Link from 'next/link';
 import { isServer } from '../utils/isServer';
 
 const Index = () => {
-	const [variables, setVariables] = useState({
-		limit: 50,
-		cursor: null as null | string
+	const { data: userData } = useMeQuery();
+	const { data, loading, error, fetchMore, variables } = usePostsQuery({
+		variables: {
+			limit: 15,
+			cursor: null
+		}
 	});
-	const [{ data: userData }] = useMeQuery({ pause: isServer() });
-	const [{ data, fetching }] = usePostsQuery({
-		variables
-	});
-	const [_, deletePost] = useDeletePostMutation();
+	const [deletePost] = useDeletePostMutation();
 	return (
 		<Layout>
-			{fetching && <div>Loading...</div>}
+			{loading && !error && <div>Loading...</div>}
 			<Stack spacing={8}>
 				<Heading>LeReddit</Heading>
 				{data?.posts.posts.map((post) => (
@@ -85,27 +82,51 @@ const Index = () => {
 										aria-label='updoot-post'
 										icon={<DeleteIcon />}
 										onClick={async () => {
-											deletePost({ id: post.id });
+											deletePost({
+												variables: { id: post.id }
+											});
 										}}
 									/>
 								)}
 						</Box>
 					</Flex>
 				))}
-				{!data && !fetching ? <div>No posts available</div> : null}1
+				{!data && !loading ? <div>No posts available</div> : null}1
 			</Stack>
 			{data && data.posts.hasMore ? (
 				<Flex>
 					<Button
 						onClick={() => {
-							setVariables({
-								limit: variables.limit,
-								cursor: data.posts.posts[
-									data.posts.posts.length - 1
-								].created_at
+							fetchMore({
+								variables: {
+									limit: variables?.limit,
+									cursor: data.posts.posts[
+										data.posts.posts.length - 1
+									].created_at
+								},
+								updateQuery: (
+									previousValue,
+									{ fetchMoreResult }
+								) => {
+									if (!fetchMoreResult) {
+										return previousValue;
+									}
+									return {
+										__typename: 'Query',
+										posts: {
+											__typename: 'PaginatedPosts',
+											hasMore:
+												fetchMoreResult.posts.hasMore,
+											posts: [
+												...previousValue.posts.posts,
+												...fetchMoreResult.posts.posts
+											]
+										}
+									};
+								}
 							});
 						}}
-						isLoading={fetching}
+						isLoading={loading}
 						m='auto'
 						my={8}>
 						load more
@@ -115,4 +136,4 @@ const Index = () => {
 		</Layout>
 	);
 };
-export default withUrqlClient(createUrqlClient as any, { ssr: true })(Index);
+export default Index;

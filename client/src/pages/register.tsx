@@ -13,16 +13,20 @@ import Layout from '../components/Layout';
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
-	const [_, register] = useRegisterMutation();
+	const [register] = useRegisterMutation();
 	const router = useRouter();
 	return (
 		<Layout>
 			<Formik
 				initialValues={{ username: '', email: '', password: '' }}
 				onSubmit={async (values, { setErrors }) => {
-					const response = await register({ options: values });
+					const response = await register({
+						variables: { options: values }
+					});
 					if (response.data?.register.errors) {
-						setErrors(toErrorMap(response.data.register.errors as any));
+						setErrors(
+							toErrorMap(response.data.register.errors as any)
+						);
 					} else if (response.data?.register.user) {
 						// user register works
 						router.push('/');
@@ -66,4 +70,4 @@ const Register: React.FC<RegisterProps> = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient as any)(Register);
+export default Register;

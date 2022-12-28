@@ -12,7 +12,7 @@ import { FieldError, useChangePasswordMutation } from '../../gql/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 
 const ChangePassword: NextPage<{ token: string }> = (props) => {
-	const [_, changePassword] = useChangePasswordMutation();
+	const [changePassword] = useChangePasswordMutation();
 	const [tokenError, setTokenError] = useState('');
 
 	return (
@@ -21,8 +21,10 @@ const ChangePassword: NextPage<{ token: string }> = (props) => {
 				initialValues={{ newPassword: '' }}
 				onSubmit={async (values, { setErrors }) => {
 					const response = await changePassword({
-						newPassword: values.newPassword,
-						token: props.token
+						variables: {
+							newPassword: values.newPassword,
+							token: props.token
+						}
 					});
 					if (response.data?.changePassword.errors) {
 						const errorMap = toErrorMap(
@@ -66,4 +68,4 @@ const ChangePassword: NextPage<{ token: string }> = (props) => {
 ChangePassword.getInitialProps = (context) => {
 	return { token: context.query.token as string };
 };
-export default withUrqlClient(createUrqlClient as any)(ChangePassword);
+export default ChangePassword;

@@ -4,13 +4,15 @@ import { useRouter } from 'next/router';
 
 import { useMeQuery, useLogoutMutation } from '../gql/graphql';
 import { isServer } from '../utils/isServer';
+import { useApolloClient } from '@apollo/client';
 
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
-	const [{ data }] = useMeQuery({ pause: isServer() });
+	const { loading, data } = useMeQuery({ skip: isServer() });
+	const apolloClient = useApolloClient();
 	const router = useRouter();
-	const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+	const [logout, { loading: logoutFetching }] = useLogoutMutation();
 
 	return (
 		<Flex
@@ -51,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 							isLoading={logoutFetching}
 							onClick={async () => {
 								await logout();
-								router.reload();
+								await apolloClient.resetStore();
 							}}>
 							Logout
 						</Button>

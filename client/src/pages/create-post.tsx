@@ -12,15 +12,17 @@ import { useIsAuth } from '../utils/useIsAuth';
 const CreatePost: React.FC = () => {
 	const router = useRouter();
 	const toast = useToast();
-	const [_, createPost] = useCreatePostMutation();
+	const [createPost] = useCreatePostMutation();
 	useIsAuth();
 	return (
 		<Layout variant='small'>
 			<Formik
 				initialValues={{ title: '', description: '' }}
 				onSubmit={async (values, { setErrors }) => {
-					const { error } = await createPost({ input: values });
-					if (!error) {
+					const { errors } = await createPost({
+						variables: { input: values }
+					});
+					if (errors?.length === 0) {
 						toast({
 							title: 'Post added',
 							status: 'success',
@@ -61,4 +63,4 @@ const CreatePost: React.FC = () => {
 	);
 };
 
-export default withUrqlClient(createUrqlClient as any, { ssr: true })(CreatePost);
+export default CreatePost;
