@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
-require("dotenv-safe");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
@@ -29,6 +30,7 @@ const main = async () => {
         password: process.env.REDIS_PASSWORD
     });
     const app = (0, express_1.default)();
+    app.set('trust proxy', 1);
     app.use((0, cors_1.default)({
         origin: process.env.CORS_ORIGIN,
         credentials: true
@@ -40,10 +42,11 @@ const main = async () => {
             disableTouch: true
         }),
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24,
             httpOnly: true,
-            sameSite: 'lax',
-            secure: false // works with HTTPS and HTTP also
+            maxAge: 1000 * 60 * 60 * 24,
+            sameSite: 'none',
+            secure: true,
+            domain: ''
         },
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
@@ -71,6 +74,7 @@ const main = async () => {
         app,
         cors: false
     });
+    app.get('/', (req, res) => res.send('Hello'));
     app.listen(process.env.PORT, () => console.log('Server started on localhost: ' + process.env.PORT));
 };
 main().catch((err) => console.error(err));

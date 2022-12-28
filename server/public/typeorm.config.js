@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
-require("dotenv-safe/config");
 const User_1 = require("./entities/User");
 const Post_1 = require("./entities/Post");
 const typeorm_1 = require("typeorm");

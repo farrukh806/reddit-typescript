@@ -172,7 +172,7 @@ let UserResolver = class UserResolver {
         const token = (0, uuid_1.v4)();
         await ctx.redis.set(constants_1.FORGOT_PASSWORD_PREFIX + token, userExists.id, 'EX', 1000 * 60 * 60 * 24 // 1 day as expiration
         );
-        await (0, sendMail_1.sendEmail)(email, `<a href="http://localhost:3000/password-reset/${token}">Reset Password</a>`);
+        await (0, sendMail_1.sendEmail)(email, `<a href="${process.env.API_URL}/password-reset/${token}">Reset Password</a>`);
         return true;
     }
     async changePassword(token, newPassword, ctx) {

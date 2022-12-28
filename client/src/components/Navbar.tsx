@@ -52,7 +52,6 @@ const Navbar: React.FC<NavbarProps> = () => {
 							onClick={async () => {
 								await logout();
 								router.reload();
-
 							}}>
 							Logout
 						</Button>

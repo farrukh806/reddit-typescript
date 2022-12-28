@@ -192,7 +192,7 @@ export class UserResolver {
 		);
 		await sendEmail(
 			email,
-			`<a href="http://localhost:3000/password-reset/${token}">Reset Password</a>`
+			`<a href="${process.env.API_URL}/password-reset/${token}">Reset Password</a>`
 		);
 		return true;
 	}

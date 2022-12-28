@@ -1,5 +1,7 @@
 query Me {
 	me {
-		...regular_user
+		id
+		username
+		email
 	}
 }

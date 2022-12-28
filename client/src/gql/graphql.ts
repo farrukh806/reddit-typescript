@@ -34,13 +34,6 @@ export type Regular_PostFragment = {
 	creator: { __typename?: 'User'; id: number; username: string };
 } & { ' $fragmentName'?: 'Regular_PostFragment' };
 
-export type Regular_UserFragment = {
-	__typename?: 'User';
-	id: number;
-	username: string;
-	email: string;
-} & { ' $fragmentName'?: 'Regular_UserFragment' };
-
 export type ChangePasswordMutationVariables = Exact<{
 	token: Scalars['String'];
 	newPassword: Scalars['String'];
@@ -57,13 +50,12 @@ export type ChangePasswordMutation = {
 				};
 			}
 		> | null;
-		user?:
-			| ({ __typename?: 'User' } & {
-					' $fragmentRefs'?: {
-						Regular_UserFragment: Regular_UserFragment;
-					};
-			  })
-			| null;
+		user?: {
+			__typename?: 'User';
+			id: number;
+			username: string;
+			email: string;
+		} | null;
 	};
 };
 
@@ -119,17 +111,14 @@ export type LoginMutation = {
 				};
 			}
 		> | null;
-		user?:
-			| ({ __typename?: 'User' } & {
-					' $fragmentRefs'?: {
-						Regular_UserFragment: Regular_UserFragment;
-					};
-			  })
-			| null;
+		user?: {
+			__typename?: 'User';
+			id: number;
+			username: string;
+			email: string;
+		} | null;
 	};
 };
-
-export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
 
 export type LogoutMutation = { __typename?: 'Mutation'; logout: boolean };
 
@@ -148,13 +137,12 @@ export type RegisterMutation = {
 				};
 			}
 		> | null;
-		user?:
-			| ({ __typename?: 'User' } & {
-					' $fragmentRefs'?: {
-						Regular_UserFragment: Regular_UserFragment;
-					};
-			  })
-			| null;
+		user?: {
+			__typename?: 'User';
+			id: number;
+			username: string;
+			email: string;
+		} | null;
 	};
 };
 
@@ -190,13 +178,12 @@ export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MeQuery = {
 	__typename?: 'Query';
-	me?:
-		| ({ __typename?: 'User' } & {
-				' $fragmentRefs'?: {
-					Regular_UserFragment: Regular_UserFragment;
-				};
-		  })
-		| null;
+	me?: {
+		__typename?: 'User';
+		id: number;
+		username: string;
+		email: string;
+	} | null;
 };
 
 export type PostQueryVariables = Exact<{
@@ -392,13 +379,6 @@ export const Regular_PostFragmentDoc = gql`
 		}
 	}
 `;
-export const Regular_UserFragmentDoc = gql`
-	fragment regular_user on User {
-		id
-		username
-		email
-	}
-`;
 export const ChangePasswordDocument = gql`
 	mutation ChangePassword($token: String!, $newPassword: String!) {
 		changePassword(token: $token, newPassword: $newPassword) {
@@ -406,12 +386,13 @@ export const ChangePasswordDocument = gql`
 				...regular_error
 			}
 			user {
-				...regular_user
+				id
+				username
+				email
 			}
 		}
 	}
 	${Regular_ErrorFragmentDoc}
-	${Regular_UserFragmentDoc}
 `;
 
 export function useChangePasswordMutation() {
@@ -469,12 +450,13 @@ export const LoginDocument = gql`
 				...regular_error
 			}
 			user {
-				...regular_user
+				id
+				username
+				email
 			}
 		}
 	}
 	${Regular_ErrorFragmentDoc}
-	${Regular_UserFragmentDoc}
 `;
 
 export function useLoginMutation() {
@@ -489,9 +471,7 @@ export const LogoutDocument = gql`
 `;
 
 export function useLogoutMutation() {
-	return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(
-		LogoutDocument
-	);
+	return Urql.useMutation<LogoutMutation>(LogoutDocument);
 }
 export const RegisterDocument = gql`
 	mutation Register($options: UsernamePasswordInputType!) {
@@ -500,12 +480,13 @@ export const RegisterDocument = gql`
 				...regular_error
 			}
 			user {
-				...regular_user
+				id
+				username
+				email
 			}
 		}
 	}
 	${Regular_ErrorFragmentDoc}
-	${Regular_UserFragmentDoc}
 `;
 
 export function useRegisterMutation() {
@@ -545,10 +526,11 @@ export function useVoteMutation() {
 export const MeDocument = gql`
 	query Me {
 		me {
-			...regular_user
+			id
+			username
+			email
 		}
 	}
-	${Regular_UserFragmentDoc}
 `;
 
 export function useMeQuery(
