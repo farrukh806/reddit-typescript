@@ -9,7 +9,7 @@
 		"start": "node public/index.js",
 		"dev": "nodemon public/index.js",
 		"gen-env": "npx gen-env-types .env -o src/types/env.d.ts -e .",
-		"migrations:create": "mikro-orm migration:create"
+		"migrations:create": "typeorm migration:create"
 	},
 	"keywords": [],
 	"author": "",
