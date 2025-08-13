@@ -2,7 +2,6 @@
 
 Reddit web application using NEXT, GraphQL and PostgreSQL
 
-Deployed Link: #https://client-taupe-rho.vercel.app/
 
 Before starting the server set all ENV variables mentioned in .env.example file for backend
 and .env.local file for frontend
